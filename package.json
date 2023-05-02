@@ -35,9 +35,13 @@
     "helmet": "^6.1.5",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.2",
-    "prettier": "^2.8.8"
+    "pg": "^8.10.0",
+    "pg-hstore": "^2.3.4",
+    "prettier": "^2.8.8",
+    "sequelize": "^6.31.1",
+    "eslint": "^8.39.0"
   },
   "devDependencies": {
-    "eslint": "^8.39.0"
+    "sequelize-cli": "^6.6.0"
   }
 }
