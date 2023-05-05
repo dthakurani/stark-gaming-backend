@@ -39,13 +39,30 @@ const signup = (req, res, next) => {
 
 const login = (req, res, next) => {
   const schema = JoiInstance.object().keys({
-    nick_name: [Joi.string().email(), Joi.string().alphanum().min(3).max(30)],
+    nick_name: Joi.alternatives().try(Joi.string().email(), Joi.string().alphanum().min(3).max(30)).required().label('email/username'),
     password: Joi.string().required()
+  });
+  return validateRequest(req, res, next, schema, requestParameterTypes.body);
+};
+
+const verifyAccount = (req, res, next) => {
+  const schema = JoiInstance.object().keys({
+    userId: Joi.string().required(),
+    confirmationCode: Joi.string().required()
+  });
+  return validateRequest(req, res, next, schema, requestParameterTypes.params);
+};
+
+const resendLink = (req, res, next) => {
+  const schema = JoiInstance.object().keys({
+    email: Joi.string().email().required()
   });
   return validateRequest(req, res, next, schema, requestParameterTypes.body);
 };
 
 module.exports = {
   signup,
-  login
+  login,
+  verifyAccount,
+  resendLink
 };
