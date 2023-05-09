@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const compression = require('compression');
 
 const { commonErrorHandler } = require('./utilities/errorHandler');
+const routes = require('./routes');
 
 const app = express();
 
@@ -24,6 +25,9 @@ app.use(helmet());
 
 // Enable gzip compression module for REST API
 app.use(compression());
+
+// REST API entry point
+routes.registerRoutes(app);
 
 app.use('/health', (_req, res) => {
   res.send({ message: 'Application running successfully!' });
