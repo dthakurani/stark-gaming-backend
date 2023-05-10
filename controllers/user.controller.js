@@ -58,9 +58,39 @@ const resendLink = async (req, res, next) => {
   }
 };
 
+const forgetPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const forgetPasswordResponse = await userService.forgetPassword(email);
+
+    req.message = forgetPasswordResponse;
+    next();
+  } catch (error) {
+    console.log('login error:', error);
+    const statusCode = error.statusCode || 500;
+    commonErrorHandler(req, res, error.message, statusCode, error);
+  }
+};
+
+const resetPassword = async (req, res, next) => {
+  try {
+    const payload = req.body;
+    const forgetPasswordResponse = await userService.resetPassword(payload);
+
+    req.message = forgetPasswordResponse;
+    next();
+  } catch (error) {
+    console.log('login error:', error);
+    const statusCode = error.statusCode || 500;
+    commonErrorHandler(req, res, error.message, statusCode, error);
+  }
+};
+
 module.exports = {
   signup,
   login,
   verifyAccount,
-  resendLink
+  resendLink,
+  forgetPassword,
+  resetPassword
 };

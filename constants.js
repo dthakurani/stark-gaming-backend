@@ -9,7 +9,12 @@ const responseMessages = {
   INVALID_CONFIRMATION_CODE_USER_MAPPING: 'We were unable to find a user for this verification. Please SignUp!',
   ALREADY_VERIFIED: 'User has been already verified. Please Login',
   SUCCESSFULLY_VERIFIED: 'Your account has been successfully verified',
-  EMAIL_NOT_FOUND: 'We were unable to find a user with that email. Make sure your Email is correct!'
+  EMAIL_NOT_FOUND: 'We were unable to find a user with that email. Make sure your Email is correct!',
+  FORGET_PASSWORD_MAIL_SUCCESS: 'Link for reset password sent to your email.',
+  MAIL_FAILURE: 'Technical Issue!, Please try again after some time.',
+  INVALID_RESET_PASSWORD_TOKEN: 'Link is not valid.',
+  EXPIRED_RESET_PASSWORD_TOKEN: 'Link is expired.',
+  RESET_PASSWORD_MAIL_SUCCESS: 'Password updated successful'
 };
 
 module.exports = {

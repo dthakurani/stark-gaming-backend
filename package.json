@@ -18,10 +18,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index",
+    "start": "nodemon index.js",
     "test": "jest",
     "format": "prettier --write \"./**/*.{js,jsx}\"",
     "lint": "npx eslint ./",
+    "migrate": "npx sequelize-cli db:migrate",
+    "migrate:undo": "npx sequelize-cli db:migrate:undo:all",
     "configure-husky": "npx husky install && npx husky add .husky/pre-commit \"npx --no-install lint-staged\""
   },
   "dependencies": {
@@ -48,6 +50,7 @@
     "sequelize": "^6.31.1"
   },
   "devDependencies": {
+    "nodemon": "^2.0.22",
     "sequelize-cli": "^6.6.0"
   }
 }
