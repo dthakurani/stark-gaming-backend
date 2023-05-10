@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const ejs = require('ejs');
 const path = require('path');
+const { Fernet } = require('fernet-nodejs');
 
 const model = require('../models');
 const { CustomException } = require('../utilities/errorHandler');
@@ -56,7 +57,9 @@ const login = async payload => {
   }
 
   const existingUser = await model.User.findOne({
-    userNameOrEmailWhereQuery
+    where: {
+      userNameOrEmailWhereQuery
+    }
   });
 
   // check for user is in database
@@ -113,13 +116,17 @@ const login = async payload => {
 };
 
 const verifyAccount = async (userId, confirmationCode) => {
-  const existingConfirmationCode = await model.User.findOne({ confirmation_code: confirmationCode });
+  const existingUser = await model.User.findOne({ where: { id: userId } });
+  if (!existingUser) throw new CustomException(responseMessages.INVALID_CONFIRMATION_CODE_USER_MAPPING, 404);
 
-  if (!existingConfirmationCode) throw new CustomException(responseMessages.EXPIRE_CONFIRMATION_CODE, 498);
-
-  const existingUser = await model.User.findOne({ user_id: userId, email: existingConfirmationCode.email });
-  if (!existingUser) throw new CustomException(responseMessages.INVALID_CONFIRMATION_CODE_USER_MAPPING, 401); // not valid user
   if (existingUser.active) return responseMessages.ALREADY_VERIFIED; // user is already verified
+
+  const existingConfirmationCodeString = Buffer.from(confirmationCode, 'base64').toString();
+  const confirmationCodeDecrypt = Fernet.decrypt(existingConfirmationCodeString, process.env.ENCRYPT_KEY);
+
+  if (existingUser.confirmation_code.code !== confirmationCodeDecrypt.code || existingUser.confirmation_code.expires < new Date().getTime()) {
+    if (!existingUser) throw new CustomException(responseMessages.EXPIRE_CONFIRMATION_CODE, 498);
+  }
   // activate user
   await model.User.update({ active: true, confirmation_code: null }, { where: { id: userId } });
   return responseMessages.SUCCESSFULLY_VERIFIED;
@@ -138,7 +145,7 @@ const resendLink = async email => {
 };
 
 const forgetPassword = async email => {
-  const existingUser = await model.User.findOne({ email });
+  const existingUser = await model.User.findOne({ where: { email } });
   if (!existingUser) throw new CustomException(responseMessages.EMAIL_NOT_FOUND, 404);
   const resetPasswordToken = `${crypto.randomUUID()}-${new Date().getTime()}`;
   const resetPasswordLink = `${process.env.APP_BASE_URL}/api/user/reset-password/${existingUser.id}/${resetPasswordToken}`;
